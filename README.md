@@ -57,8 +57,8 @@ O projeto foi desenvolvido com foco em qualidade, resultando numa **cobertura de
 1. **Clone o repositório:**
 
    ```bash
-   git clone <URL_DO_SEU_REPOSITORIO>
-   cd <NOME_DA_PASTA_DO_PROJETO>
+      git clone https://github.com/FernandoRiggi/salespace-backend-challenge.git
+      cd salespace-backend-challenge
    ```
 
 2. **Instale as dependências:**
