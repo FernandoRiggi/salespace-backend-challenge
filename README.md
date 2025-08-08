@@ -20,7 +20,7 @@ Esta é uma API REST desenvolvida em Node.js e TypeScript como parte do desafio 
 
 * **Observabilidade:** Inclui logs detalhados durante o processo de cálculo para facilitar a depuração.
 
-## Funcionalidades (Bónus)
+## Funcionalidades (Bônus)
 
 * **Fluxo de Cotação e Finalização:** A API expõe duas rotas para simular um ambiente de vendas B2B:
 
