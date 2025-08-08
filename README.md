@@ -57,8 +57,8 @@ O projeto foi desenvolvido com foco em qualidade, resultando numa **cobertura de
 1. **Clone o repositório:**
 
    ```bash
-      git clone https://github.com/FernandoRiggi/salespace-backend-challenge.git
-      cd salespace-backend-challenge
+   git clone https://github.com/FernandoRiggi/salespace-backend-challenge.git
+   cd salespace-backend-challenge
    ```
 
 2. **Instale as dependências:**
@@ -84,9 +84,13 @@ Para executar a suíte completa de testes de unidade e integração, utilize o c
 npm test
 ```
 
-### Testes Manuais (Exemplos com `curl`)
+### Testes Manuais
 
-#### 1. Criar uma Cotação
+Os exemplos abaixo mostram como interagir com os endpoints da API.
+
+#### Exemplos para `curl` (Linux/macOS/WSL)
+
+##### 1. Criar uma Cotação
 
 ```bash
 curl -X POST http://localhost:3000/v1/orders/quote \
@@ -100,7 +104,7 @@ curl -X POST http://localhost:3000/v1/orders/quote \
 
 *Copie a `idempotencyKey` da resposta.*
 
-#### 2. Finalizar um Pedido
+##### 2. Finalizar um Pedido
 
 *Substitua `SUA_CHAVE_AQUI` pela chave obtida no passo anterior.*
 
@@ -112,16 +116,30 @@ curl -X POST http://localhost:3000/v1/orders \
 }'
 ```
 
-#### 3. Erro de Produto Não Encontrado (404)
+---
 
-```bash
-curl -i -X POST http://localhost:3000/v1/orders/quote \
--H "Content-Type: application/json" \
--d '{
+#### Exemplos para Windows PowerShell
+
+##### 1. Criar uma Cotação
+
+```powershell
+Invoke-WebRequest -Uri http://localhost:3000/v1/orders/quote -Method POST -ContentType "application/json" -Body '{
   "items": [
-    { "productId": "sku-invalido-999", "quantity": 1 }
+    { "productId": "sku-intimo-001", "quantity": 15 }
   ]
-}'
+}' | Select-Object -ExpandProperty Content
+```
+
+*Copie a `idempotencyKey` da resposta.*
+
+##### 2. Finalizar um Pedido
+
+*Substitua `SUA_CHAVE_AQUI` pela chave obtida no passo anterior.*
+
+```powershell
+Invoke-WebRequest -Uri http://localhost:3000/v1/orders -Method POST -ContentType "application/json" -Body '{
+  "idempotencyKey": "SUA_CHAVE_AQUI"
+}' | Select-Object -ExpandProperty Content
 ```
 
 ## Estrutura do Projeto
