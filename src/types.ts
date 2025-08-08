@@ -34,3 +34,27 @@ export type OrderResponse = {
   discounts: Discount[];
   total: number;
 };
+
+export type Quote = {
+  id: string;
+  items: OrderItemOutput[];
+  discounts: Discount[];
+  total: number;
+  createdAt: Date;
+  expiresAt: Date;
+};
+
+export type QuoteResponse = {
+  idempotencyKey: string;
+  expiresAt: string;
+  currency: string;
+  items: Omit<OrderItemOutput, 'category'>[];
+  discounts: Discount[];
+  total: number;
+};
+
+export type FinalizedOrderResponse = {
+  message: string;
+  orderId: string;
+  order: QuoteResponse;
+}

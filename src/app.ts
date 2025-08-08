@@ -9,6 +9,12 @@ app.use('/v1/orders', orderRoutes);
 
 app.use((err: Error, request: Request, response: Response, _next: NextFunction) => {
   if (err instanceof AppError) {
+    if(err.data){
+      return response.status(err.statusCode).json({
+        message: err.message,
+        ...err.data,
+      });
+    }
     return response.status(err.statusCode).json({
       message: err.message,
     });
