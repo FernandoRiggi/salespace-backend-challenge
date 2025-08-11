@@ -26,6 +26,7 @@ Esta é uma API REST desenvolvida em Node.js e TypeScript como parte do desafio 
 * **TypeScript:** Superset do JavaScript que adiciona tipagem estática.
 * **Express:** Framework web para a criação da API.
 * **Jest & ts-jest:** Framework e preset para a execução de testes automatizados.
+* **Supertest:** Biblioteca para testes de integração de APIs HTTP.
 
 ## Como Executar o Projeto
 
