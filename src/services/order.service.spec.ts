@@ -69,7 +69,7 @@ describe('OrderService - Bónus de Cotação', () => {
         expect(error).toBeInstanceOf(AppError);
         const appError = error as AppError;
         expect(appError.statusCode).toBe(422);
-        expect(appError.message).toContain('Cotação expirada. Uma nova cotação foi gerada:');
+        expect(appError.message).toContain('Cotação expirada. Uma nova cotação foi gerada com o ID:');
         expect(appError.data).toHaveProperty('newQuote');
       }
 
@@ -77,8 +77,8 @@ describe('OrderService - Bónus de Cotação', () => {
     });
 
     it('deve lançar um erro 422 se a chave de idempotência não for fornecida', () => {
-        // @ts-ignore - Testando intencionalmente com um argumento inválido (undefined)
-        expect(() => orderService.finalizeOrder(undefined)).toThrow(
+      // @ts-ignore   
+      expect(() => orderService.finalizeOrder(undefined)).toThrow(
             new AppError('A chave de idempotência (idempotencyKey) é obrigatória.', 422)
         );
     });

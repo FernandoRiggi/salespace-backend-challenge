@@ -1,4 +1,3 @@
-
 import { OrderItemInput, Product, OrderItemOutput, QuoteResponse, Quote, FinalizedOrderResponse } from '../types';
 import { products } from '../data/products';
 import { quoteStore } from '../data/quote.store';
@@ -6,48 +5,59 @@ import { DiscountEngine } from './discount.service';
 import { AppError } from '../errors/AppError';
 import { randomUUID } from 'crypto';
 
-export class OrderService{
+export class OrderService {
     private productMap: Map<string, Product>;
     private discountEngine: DiscountEngine;
-    private QUOTE_VALIDITY_IN_MINUTES = 15 ;
+    private QUOTE_VALIDITY_IN_MINUTES = 15;
 
-    constructor(){
+    constructor() {
         this.productMap = new Map(products.map((p) => [p.id, p]));
         this.discountEngine = new DiscountEngine();
     }
 
-    public createQuote(data: {items: OrderItemInput[] }): QuoteResponse{
-        if(!data.items || !Array.isArray(data.items) || data.items.length === 0) {
+    public createQuote(data: { items: OrderItemInput[] }): QuoteResponse {
+        if (!data.items || !Array.isArray(data.items) || data.items.length === 0) {
             throw new AppError('O campo "items" é obrigatório e não pode estar vazio.', 422);
-    }
+        }
 
-    const { items, subtotal, totalQuantity} = this.processItems(data.items);
-    const {discounts, total} = this.discountEngine.calculateDiscounts({ items, subtotal, totalQuantity});
+        const { items: initialItems, subtotal, totalQuantity } = this.processItems(data.items);
 
-    const idempotencyKey = randomUUID();
+        const {
+            itemsWithDiscounts,
+            cartDiscounts,
+            finalTotal
+        } = this.discountEngine.calculateDiscounts({
+            items: initialItems,
+            subtotal,
+            totalQuantity
+        });
+
+        const idempotencyKey = randomUUID();
         const now = new Date();
         const expiresAt = new Date(now.getTime() + this.QUOTE_VALIDITY_IN_MINUTES * 60000);
 
         const quote: Quote = {
             id: idempotencyKey,
-            items,
-            discounts,
-            total,
+            items: itemsWithDiscounts, 
+            discounts: cartDiscounts,
+            total: finalTotal,
             createdAt: now,
             expiresAt,
         };
-
-
         quoteStore.set(idempotencyKey, quote);
         console.log(`Cotação criada: ${idempotencyKey}, expira em: ${expiresAt.toLocaleTimeString()}`);
+
+        const publicResponse = {
+            currency: 'BRL',
+            items: itemsWithDiscounts.map(({ category, ...rest }) => rest), 
+            discounts: cartDiscounts,
+            total: finalTotal,
+        };
 
         return {
             idempotencyKey,
             expiresAt: expiresAt.toISOString(),
-            currency: 'BRL',
-            items: items.map(({ category, ...rest }) => rest),
-            discounts,
-            total,
+            ...publicResponse
         };
     }
 
@@ -65,8 +75,9 @@ export class OrderService{
         const now = new Date();
         if (now > quote.expiresAt) {
             console.log(`Tentativa de finalizar cotação expirada: ${idempotencyKey}`);
-            const newQuoteResponse = this.createQuote({ items: quote.items });
-            throw new AppError(`Cotação expirada. Uma nova cotação foi gerada: ${newQuoteResponse.idempotencyKey}`, 422, { newQuote: newQuoteResponse });
+            const originalItemsInput: OrderItemInput[] = quote.items.map(i => ({ productId: i.productId, quantity: i.quantity }));
+            const newQuoteResponse = this.createQuote({ items: originalItemsInput });
+            throw new AppError(`Cotação expirada. Uma nova cotação foi gerada com o ID: ${newQuoteResponse.idempotencyKey}`, 422, { newQuote: newQuoteResponse });
         }
 
         console.log(`Pedido finalizado com sucesso a partir da cotação: ${idempotencyKey}`);
@@ -86,7 +97,7 @@ export class OrderService{
             }
         };
     }
-
+    
     private processItems(inputItems: OrderItemInput[]): { items: OrderItemOutput[], subtotal: number, totalQuantity: number } {
         const items: OrderItemOutput[] = [];
         let subtotal = 0;
@@ -106,13 +117,13 @@ export class OrderService{
                 unitPrice: product.price,
                 quantity: item.quantity,
                 subtotal: parseFloat(itemTotal.toFixed(2)),
-                itemDiscounts: [],
-                total: parseFloat(itemTotal.toFixed(2)),
-                category: product.category
+                itemDiscounts: [], 
+                total: parseFloat(itemTotal.toFixed(2)), 
+                category: product.category 
             });
             subtotal += itemTotal;
             totalQuantity += item.quantity;
         }
-        return { items, subtotal, totalQuantity };
+        return { items, subtotal: parseFloat(subtotal.toFixed(2)), totalQuantity };
     }
 }
