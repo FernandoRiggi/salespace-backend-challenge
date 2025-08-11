@@ -1,9 +1,5 @@
 # API de Cálculo de Pedidos - Desafio de Estágio Salespace
 
-[![Testes](https://img.shields.io/badge/testes-100%25-brightgreen?style=for-the-badge&logo=jest)](https://jestjs.io)
-[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
-
 Esta é uma API REST desenvolvida em Node.js e TypeScript como parte do desafio de estágio backend da Salespace. A API calcula o valor total de um pedido, aplicando um conjunto de regras de desconto progressivas e, adicionalmente, implementa um fluxo de cotação e finalização de pedidos.
 
 ## Funcionalidades Principais
