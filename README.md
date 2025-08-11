@@ -39,7 +39,7 @@ Esta é uma API REST desenvolvida em Node.js e TypeScript como parte do desafio 
 
 1.  **Clone o repositório:**
     ```bash
-    git clone [https://github.com/FernandoRiggi/salespace-backend-challenge.git](https://github.com/FernandoRiggi/salespace-backend-challenge.git)
+    git clone https://github.com/FernandoRiggi/salespace-backend-challenge.git
     cd salespace-backend-challenge
     ```
 
